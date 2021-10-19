@@ -9,8 +9,9 @@ import com.example.moviesapp.Movie
 import com.example.moviesapp.model.MovieRepository
 import kotlinx.coroutines.launch
 
-class MovieViewModel
-: ViewModel() {
+
+class MovieViewModel : ViewModel() {
+
     private lateinit var movieRepository: MovieRepository
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -18,7 +19,8 @@ class MovieViewModel
     private val _movieList = MutableLiveData<List<Movie>>()
     val movieList: LiveData<List<Movie>> = _movieList
 
-    fun init(movieRepository: MovieRepository
+    fun init(
+        movieRepository: MovieRepository
     ) {
         this.movieRepository = movieRepository
     }

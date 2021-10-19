@@ -1,4 +1,4 @@
-package com.example.moviesapp
+package com.example.moviesapp.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,20 +7,26 @@ import android.widget.Toast
 import androidx.activity.viewModels
 
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.moviesapp.api.MovieApi
+import com.example.moviesapp.Movie
+import com.example.moviesapp.MovieAdapter
 import com.example.moviesapp.databinding.ActivityMainBinding
+import com.example.moviesapp.di.component.MyApplication
 import com.example.moviesapp.model.MovieRepository
-import com.example.moviesapp.view.MovieDetailsActivity
-import com.example.moviesapp.view.OnItemClickListener
 import com.example.moviesapp.viewmodel.MovieViewModel
+import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity(), OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
     private val adapter = MovieAdapter(this)
 
     private val viewModel by viewModels<MovieViewModel>()
+    @Inject
+    lateinit var movieRepository: MovieRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (applicationContext as MyApplication).appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -34,9 +40,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     }
 
     private fun initViewModel() {
-        val apiService = MovieApi.getInstance()
-        val repository = MovieRepository(apiService)
-        viewModel.init(repository)
+        viewModel.init(movieRepository)
     }
 
     private fun getAllMovies() {
@@ -45,9 +49,9 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
     private fun initObservers() {
         viewModel.movieList.observe(this, { movies ->
-            if(movies != null) {
+            if (movies != null) {
                 adapter.setMovies(movies)
-            } else{
+            } else {
                 Toast.makeText(this, "Error in getting List", Toast.LENGTH_LONG).show()
             }
         })
@@ -58,9 +62,9 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     }
 
     override fun onItemClick(index: Int, movie: Movie) {
-            val intent = Intent(this, MovieDetailsActivity::class.java).apply {
-                putExtra("Movie Index", index)
-            }
-            startActivity(intent)
+        val intent = Intent(this, MovieDetailsActivity::class.java).apply {
+            putExtra("Movie Index", index)
+        }
+        startActivity(intent)
     }
 }
