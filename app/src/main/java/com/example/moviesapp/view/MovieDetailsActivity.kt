@@ -4,21 +4,23 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
-import com.example.moviesapp.api.MovieApi
 import com.example.moviesapp.databinding.ActivityMovieDetailsBinding
+import com.example.moviesapp.di.component.MyApplication
 import com.example.moviesapp.model.MovieRepository
 import com.example.moviesapp.viewmodel.MovieDetailsViewModel
+import javax.inject.Inject
 
 class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMovieDetailsBinding
-    private val apiService = MovieApi.getInstance()
-    private val repository: MovieRepository = MovieRepository(apiService)
+    @Inject
+    lateinit var repository: MovieRepository
 
     private val viewModel by viewModels<MovieDetailsViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (applicationContext as MyApplication).appComponent.inject(this)
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
